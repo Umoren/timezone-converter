@@ -3,7 +3,7 @@ import timezones from './timezone-list';
 import moment from 'moment-timezone';
 
 function App() {
-  const [meetingTime, setMeetingTime] = useState("");
+  const [meetingTime, setMeetingTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [selectedTimezone, setSelectedTimezone] = useState(timezones[0]);
   const [utcTime, setUtcTime] = useState("");
 

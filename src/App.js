@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import timezones from './timezone-list';
-import { parseISO, isValid } from 'date-fns';
-import { zonedTimeToUtc, utcToZonedTime, format as formatTz } from 'date-fns-tz';
+import moment from 'moment-timezone';
 
 function App() {
   const [meetingTime, setMeetingTime] = useState("");
@@ -11,7 +10,6 @@ function App() {
   const handleMeetingTimeChange = (e) => {
     setMeetingTime(e.target.value);
   };
-
 
   const handleTimezoneChange = (e) => {
     setSelectedTimezone(timezones.find((tz) => tz.abbr === e.target.value));
@@ -25,23 +23,26 @@ function App() {
 
     // Combine the current date and the input time
     const currentDate = new Date();
-    const inputDateTime = parseISO(
-      `${currentDate.toISOString().split("T")[0]}T${meetingTime}:00`
+    const inputDateTime = moment.tz(
+      `${currentDate.toISOString().split("T")[0]} ${meetingTime}`,
+      "YYYY-MM-DD hh:mm A",
+      selectedTimezone.iana
     );
 
-    if (!isValid(inputDateTime)) {
+    // Check if the input is valid
+    if (!inputDateTime.isValid()) {
       setUtcTime("Invalid time value");
       return;
     }
 
     // Convert the local time to UTC
-    const utcDateTime = zonedTimeToUtc(inputDateTime, selectedTimezone.abbr);
+    const utcDateTime = inputDateTime.utc();
 
     // Convert the UTC time to the desired timezone
-    const zonedTime = utcToZonedTime(utcDateTime, 'Etc/UTC');
+    const zonedTime = utcDateTime.clone().tz('Etc/UTC');
 
     // Format the zoned time to display as a string
-    const formattedUtcTime = formatTz(zonedTime, "HH:mm", { timeZone: 'Etc/UTC' });
+    const formattedUtcTime = zonedTime.format("hh:mm A");
 
     // Set the UTC time in state
     setUtcTime(formattedUtcTime);
@@ -55,7 +56,7 @@ function App() {
         <h1 className="text-2xl font-bold mb-6">Desert Island Timezone Converter</h1>
         <div className="mb-6">
           <label htmlFor="meetingTime" className="block mb-2">
-            Meeting Time (24-hour format):
+            Your current time (24hr format):
           </label>
           <input
             type="text"
@@ -92,16 +93,13 @@ function App() {
         </div>
         <div>
           <p>
-            Meeting time in UTC:{" "}
+            Desert Island Time:{" "}
             <strong className="text-blue-500">{utcTime}</strong>
           </p>
-
-          <small> we don't consider daylight time savings yet!  </small>
+          <small> We don't consider daylight saving time yet!</small>
         </div>
       </div>
     </div>
   );
-
 }
-
 export default App;

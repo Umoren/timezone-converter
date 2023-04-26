@@ -97,7 +97,7 @@ function App() {
             Desert Island Time:{" "}
             <strong className="text-blue-500">{utcTime}</strong>
           </p>
-          <small> We don't consider daylight saving time yet!</small>
+          <small> We don't consider daylight saving time for now!</small>
         </div>
       </div>
     </div>

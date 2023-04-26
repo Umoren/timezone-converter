@@ -61,6 +61,7 @@ function App() {
           <input
             type="text"
             id="meetingTime"
+            placeholder='07:30'
             value={meetingTime}
             onChange={handleMeetingTimeChange}
             className="border border-gray-300 rounded w-full p-2"
@@ -78,7 +79,7 @@ function App() {
           >
             {timezones.map((timezone, index) => (
               <option key={index} value={timezone.abbr}>
-                {timezone.name}
+                {timezone.iana + ' ' + timezone.name}
               </option>
             ))}
           </select>

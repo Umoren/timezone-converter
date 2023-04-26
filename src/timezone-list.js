@@ -48,7 +48,6 @@ const timezones = [
     { abbr: "EUST", name: "Eastern European Summer Time (UTC+2)", iana: "Africa/Tripoli" },
     { abbr: "CET", name: "Central European Time (UTC+1)", iana: "Africa/Ceuta" },
     { abbr: "WET", name: "Western European Time (UTC+0)", iana: "Africa/El_Aaiun" },
-    { abbr: "GMT", name: "Greenwich Mean Time (UTC±00:00)", iana: "Africa/Ouagadougou" },
 
 
 ];

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import timezones from './timezone-list';
 import moment from 'moment-timezone';
+import Select from 'react-select';
+
 
 function App() {
   const [meetingTime, setMeetingTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
@@ -11,9 +13,28 @@ function App() {
     setMeetingTime(e.target.value);
   };
 
-  const handleTimezoneChange = (e) => {
-    setSelectedTimezone(timezones.find((tz) => tz.abbr === e.target.value));
+  const formattedTimezones = timezones.map((timezone) => ({
+    value: timezone.abbr,
+    label: timezone.iana + " " + timezone.name,
+  }));
+
+  useEffect(() => {
+    Notification.requestPermission();
+  }, []);
+
+  const showMeetingNotification = () => {
+    if (Notification.permission === "granted") {
+      const notification = new Notification("Meeting Time!", {
+        body: "It's 7:30 AM (UTC) - Time for your meeting!",
+        // icon: "/desertisland.jpeg",
+      });
+
+      notification.onclick = () => {
+        window.focus();
+      };
+    }
   };
+
 
   useEffect(() => {
     if (meetingTime === "") {
@@ -39,14 +60,21 @@ function App() {
     const utcDateTime = inputDateTime.utc();
 
     // Convert the UTC time to the desired timezone
-    const zonedTime = utcDateTime.clone().tz('Etc/UTC');
+    const zonedTime = utcDateTime.clone().tz("Etc/UTC");
 
     // Format the zoned time to display as a string
     const formattedUtcTime = zonedTime.format("hh:mm A");
 
     // Set the UTC time in state
     setUtcTime(formattedUtcTime);
+
+    // Check if the zoned time is 7:30 AM (UTC) and show a notification
+    if (formattedUtcTime === "07:30 AM") {
+      console.log('it is time')
+      showMeetingNotification();
+    }
   }, [meetingTime, selectedTimezone]);
+
 
 
 
@@ -71,18 +99,14 @@ function App() {
           <label htmlFor="timezone" className="block mb-2">
             Select your timezone:
           </label>
-          <select
+          <Select
             id="timezone"
-            value={selectedTimezone.abbr}
-            onChange={handleTimezoneChange}
+            value={{ value: selectedTimezone.abbr, label: selectedTimezone.iana + " " + selectedTimezone.name }}
+            onChange={(option) => setSelectedTimezone(timezones.find((tz) => tz.abbr === option.value))}
+            options={formattedTimezones}
             className="border border-gray-300 rounded w-full p-2"
-          >
-            {timezones.map((timezone, index) => (
-              <option key={index} value={timezone.abbr}>
-                {timezone.iana + ' ' + timezone.name}
-              </option>
-            ))}
-          </select>
+          />
+
         </div>
         <div className="mb-6">
           <button

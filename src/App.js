@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import timezones from './timezone-list';
 import moment from 'moment-timezone';
 import Select from 'react-select';
+import Modal from './components/Modal';
 
 
 function App() {
   const [meetingTime, setMeetingTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [selectedTimezone, setSelectedTimezone] = useState(timezones[0]);
   const [utcTime, setUtcTime] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [countdown, setCountdown] = useState("");
+
 
   const handleMeetingTimeChange = (e) => {
     setMeetingTime(e.target.value);
@@ -45,8 +49,29 @@ function App() {
     }
   };
 
+  // Calculate the time difference between the current time and the meeting time
+  const calculateCountdown = () => {
+    const now = moment();
+    const meetingTimeUK = moment.tz(
+      `${now.format("YYYY-MM-DD")} ${"07:30"}`,
+      "YYYY-MM-DD hh:mm A",
+      "Europe/London"
+    );
 
+    if (now.isAfter(meetingTimeUK)) {
+      meetingTimeUK.add(1, "days");
+    }
 
+    const duration = moment.duration(meetingTimeUK.diff(now));
+    setCountdown(
+      `${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`
+    );
+  };
+
+  useEffect(() => {
+    const timer = setInterval(calculateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (meetingTime === "") {
@@ -72,23 +97,20 @@ function App() {
     const utcDateTime = inputDateTime.utc();
 
     // Convert the UTC time to the desired timezone
-    const zonedTime = utcDateTime.clone().tz("Etc/UTC");
+    const zonedTime = utcDateTime.clone().tz("Europe/London");
 
     // Format the zoned time to display as a string
-    const formattedUtcTime = zonedTime.format("hh:mm A");
+    const formattedUtcTime = zonedTime.format("hh:mm A z");
 
     // Set the UTC time in state
     setUtcTime(formattedUtcTime);
 
     // Check if the zoned time is 7:30 AM (UTC) and show a notification
     if (formattedUtcTime === "07:30 AM") {
-      console.log('it is time')
+      setIsModalOpen(true);
       showMeetingNotification();
     }
   }, [meetingTime, selectedTimezone]);
-
-
-
 
   return (
     <div className="App min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
@@ -120,23 +142,32 @@ function App() {
           />
 
         </div>
-        <div className="mb-6">
-          <button
-            className="bg-blue-500 text-white p-2 rounded w-full"
-            disabled={!meetingTime}
-          >
-            Convert Time
-          </button>
-        </div>
+
         <div>
           <p>
             Desert Island Time:{" "}
             <strong className="text-blue-500">{utcTime}</strong>
           </p>
-          <small> We don't consider daylight saving time for now!</small>
+          <small>Now considering daylight saving time!</small>
         </div>
       </div>
+
+      <div className='bg-white shadow-md rounded-lg p-8 w-full sm:w-2/3 md:w-1/2 my-8'>
+
+        <p className='mb-2 text-sm font-mono font-semibold'>
+          The next Sunrise/Sundown Meeting is in (based on your current time):{" "}
+        </p>
+
+        <p className='text-center text-2xl'><strong className="text-blue-500 ">{countdown}</strong></p>
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        meetingLink="https://us06web.zoom.us/j/92642189858?pwd=TUpkVElab1JTVTMzV1FGelRXYU9VZz09"
+      />
     </div>
+
   );
 }
 export default App;

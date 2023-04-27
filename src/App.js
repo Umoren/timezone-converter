@@ -20,6 +20,13 @@ function App() {
 
 
   const showMeetingNotification = async () => {
+    // Check if notifications are supported
+    if (!("Notification" in window)) {
+      alert("This browser does not support desktop notifications.");
+      // You can show an alternative notification method here, if desired
+      return;
+    }
+
     try {
       const permission = await Notification.requestPermission();
 
@@ -29,10 +36,7 @@ function App() {
           icon: "/desertisland.jpeg",
         });
 
-        console.log('permission is granted')
-
         notification.onclick = () => {
-          console.log('notification is showing')
           window.focus();
         };
       }
@@ -40,6 +44,7 @@ function App() {
       console.error("Error showing notification:", error);
     }
   };
+
 
 
 

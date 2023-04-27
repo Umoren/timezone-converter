@@ -19,15 +19,20 @@ function App() {
   }));
 
 
-  const showMeetingNotification = () => {
+  const showMeetingNotification = async () => {
     try {
-      if (Notification.permission === "granted") {
+      const permission = await Notification.requestPermission();
+
+      if (permission === "granted") {
         const notification = new Notification("Meeting Time!", {
           body: "It's 7:30 AM (UTC) - Time for your meeting!",
           icon: "/desertisland.jpeg",
         });
 
+        console.log('permission is granted')
+
         notification.onclick = () => {
+          console.log('notification is showing')
           window.focus();
         };
       }
@@ -36,9 +41,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    Notification.requestPermission();
-  }, []);
 
 
   useEffect(() => {

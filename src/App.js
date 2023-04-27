@@ -6,13 +6,19 @@ import Modal from './components/Modal';
 
 
 function App() {
+  const getUserTimezone = () => {
+    const userTimezoneIana = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const userTimezone = timezones.find(tz => tz.iana === userTimezoneIana);
+    return userTimezone || timezones[0];
+  };
+
   const [meetingTime, setMeetingTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-  const [selectedTimezone, setSelectedTimezone] = useState(timezones[0]);
+  const [selectedTimezone, setSelectedTimezone] = useState(getUserTimezone());
   const [utcTime, setUtcTime] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState("");
 
-  console.log("Something is here")
+
 
   const handleMeetingTimeChange = (e) => {
     setMeetingTime(e.target.value);

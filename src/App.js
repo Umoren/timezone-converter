@@ -40,52 +40,45 @@ function App() {
     Notification.requestPermission();
   }, []);
 
+
   useEffect(() => {
-    const checkZonedTime = () => {
-      if (meetingTime === "") {
-        setUtcTime("");
-        return;
-      }
+    if (meetingTime === "") {
+      setUtcTime("");
+      return;
+    }
 
-      // Combine the current date and the input time
-      const currentDate = new Date();
-      const inputDateTime = moment.tz(
-        `${currentDate.toISOString().split("T")[0]} ${meetingTime}`,
-        "YYYY-MM-DD hh:mm A",
-        selectedTimezone.iana
-      );
+    // Combine the current date and the input time
+    const currentDate = new Date();
+    const inputDateTime = moment.tz(
+      `${currentDate.toISOString().split("T")[0]} ${meetingTime}`,
+      "YYYY-MM-DD hh:mm A",
+      selectedTimezone.iana
+    );
 
-      // Check if the input is valid
-      if (!inputDateTime.isValid()) {
-        setUtcTime("Invalid time value");
-        return;
-      }
+    // Check if the input is valid
+    if (!inputDateTime.isValid()) {
+      setUtcTime("Invalid time value");
+      return;
+    }
 
-      // Convert the local time to UTC
-      const utcDateTime = inputDateTime.utc();
+    // Convert the local time to UTC
+    const utcDateTime = inputDateTime.utc();
 
-      // Convert the UTC time to the desired timezone
-      const zonedTime = utcDateTime.clone().tz("Etc/UTC");
+    // Convert the UTC time to the desired timezone
+    const zonedTime = utcDateTime.clone().tz("Etc/UTC");
 
-      // Format the zoned time to display as a string
-      const formattedUtcTime = zonedTime.format("hh:mm A");
+    // Format the zoned time to display as a string
+    const formattedUtcTime = zonedTime.format("hh:mm A");
 
-      // Set the UTC time in state
-      setUtcTime(formattedUtcTime);
+    // Set the UTC time in state
+    setUtcTime(formattedUtcTime);
 
-      // Check if the zoned time is 7:30 AM (UTC) and show a notification
-      if (formattedUtcTime === "07:30 AM") {
-        showMeetingNotification();
-      }
-    };
-
-    const intervalId = setInterval(checkZonedTime, 1000 * 60); // Check every minute
-
-    return () => {
-      clearInterval(intervalId);
-    };
+    // Check if the zoned time is 7:30 AM (UTC) and show a notification
+    if (formattedUtcTime === "07:30 AM") {
+      console.log('it is time')
+      showMeetingNotification();
+    }
   }, [meetingTime, selectedTimezone]);
-
 
 
 

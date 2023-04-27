@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import timezones from './timezone-list';
 import moment from 'moment-timezone';
 import Select from 'react-select';
@@ -12,6 +12,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState("");
 
+  console.log("Something is here")
 
   const handleMeetingTimeChange = (e) => {
     setMeetingTime(e.target.value);
@@ -27,7 +28,6 @@ function App() {
     // Check if notifications are supported
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notifications.");
-      // You can show an alternative notification method here, if desired
       return;
     }
 
@@ -68,10 +68,7 @@ function App() {
     );
   };
 
-  useEffect(() => {
-    const timer = setInterval(calculateCountdown, 1000);
-    return () => clearInterval(timer);
-  }, []);
+
 
   useEffect(() => {
     if (meetingTime === "") {
@@ -105,12 +102,19 @@ function App() {
     // Set the UTC time in state
     setUtcTime(formattedUtcTime);
 
-    // Check if the zoned time is 7:30 AM (UTC) and show a notification
-    if (formattedUtcTime === "07:30 AM") {
+    console.log("formattedUtcTime:", formattedUtcTime);
+    // Check if the zoned time is 7:30 AM (BST) and show a notification
+    if (formattedUtcTime === "07:30 AM BST") {
       setIsModalOpen(true);
       showMeetingNotification();
+      console.log("formatted time triggered")
     }
   }, [meetingTime, selectedTimezone]);
+
+  useEffect(() => {
+    const timer = setInterval(calculateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="App min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
@@ -121,7 +125,7 @@ function App() {
             Your current time (24hr format):
           </label>
           <input
-            type="text"
+            type="time-local"
             id="meetingTime"
             placeholder='07:30'
             value={meetingTime}

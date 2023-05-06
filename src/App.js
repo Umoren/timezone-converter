@@ -163,6 +163,7 @@ function App() {
           </label>
           <input
             type="time"
+            defaultValue={meetingTime}
             id="meetingTime"
             placeholder="07:30"
             value={meetingTime}

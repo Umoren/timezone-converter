@@ -162,8 +162,7 @@ function App() {
             Your current time (24hr format):
           </label>
           <input
-            type="time"
-            defaultValue={meetingTime}
+            type="text"
             id="meetingTime"
             placeholder="07:30"
             value={meetingTime}

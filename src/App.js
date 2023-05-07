@@ -19,6 +19,11 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState("");
 
+  const formatMeetingTime = (utcTime) => {
+    const userTime = moment.tz(utcTime, "HH:mm", selectedTimezone.iana);
+    return userTime.format("hh:mm A (z)");
+  };
+
   const handleMeetingTimeChange = (e) => {
     setMeetingTime(e.target.value);
   };
@@ -216,16 +221,20 @@ function App() {
             time remaining for the next meeting based on your local time. The
             meeting schedule is as follows:
           </p>
-          <ul className="list-disc list-inside mt-2">
-            <li>Sunrise or Sundown meeting: Every day at 7:30 AM (BST)</li>
-            <li>Speaker Meeting: Mondays at 8:00 PM (BST)</li>
-            <li>Topic Meeting: Thursdays at 8:00 PM (BST)</li>
+          <p>
+            <strong>Meeting schedule (your time):</strong>
+          </p>
+          <ul>
             <li>
-              Thank the fellowship it is Friday Meeting: Fridays at 11:00 PM
-              (BST)
+              Every day at {formatMeetingTime("07:30")} - Sunrise or Sundown
+              Meeting
             </li>
-            <li>Newcomer Meeting: Sundays at 8:00 PM (BST)</li>
+            <li>Monday at {formatMeetingTime("20:00")} - Speaker Meeting</li>
+            <li>Thursday at {formatMeetingTime("20:00")} - Topic Meeting</li>
+            <li>Friday at {formatMeetingTime("23:00")} - Meditation Meeting</li>
+            <li>Sunday at {formatMeetingTime("20:00")} - Newcomer Meeting</li>
           </ul>
+
           <p className="mt-4">
             The countdown timer will display the time remaining for the next
             meeting based on the schedule above. You can also input your current

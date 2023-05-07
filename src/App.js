@@ -231,7 +231,10 @@ function App() {
             </li>
             <li>Monday at {formatMeetingTime("20:00")} - Speaker Meeting</li>
             <li>Thursday at {formatMeetingTime("20:00")} - Topic Meeting</li>
-            <li>Friday at {formatMeetingTime("23:00")} - Meditation Meeting</li>
+            <li>
+              Friday at {formatMeetingTime("23:00")} - Thank the Fellowship it's
+              Friday Meeting
+            </li>
             <li>Sunday at {formatMeetingTime("20:00")} - Newcomer Meeting</li>
           </ul>
 
